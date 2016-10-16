@@ -1,0 +1,240 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+
+import model.DrawingPanel;
+import weeksix.parttwo.ToolBarExampleWithActions;
+
+public class PowerPaintGUI extends JPanel {
+    
+    
+    private List<JButton> myButtonList;
+    
+    private DrawingPanel myDrawPanel;
+    
+    private JFrame myMainFrame;
+    
+    private Map<String, ToolAction> myToolActionMap;
+
+    private List<String> myToolList; 
+
+
+    public PowerPaintGUI()  {
+        super(new BorderLayout());
+        myToolActionMap = new HashMap<>();
+        myMainFrame = new JFrame("PowerPaint");
+        setUpComponents();
+        
+    }
+    
+    public final void setUpComponents() {
+        
+        myMainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myDrawPanel = new DrawingPanel();
+        add(myDrawPanel, BorderLayout.CENTER);
+        createTools();
+        createToolBar();
+        makeMenuBar();
+        
+        myMainFrame.setMinimumSize(myDrawPanel.getMinimumSize());
+
+        myMainFrame.add(this, BorderLayout.CENTER);
+        myMainFrame.pack();
+
+        myMainFrame.setVisible(true);
+    }
+    
+    private void createTools() {
+        myToolList = new ArrayList<>();
+        myToolList.add("Pencil");
+        myToolList.add("Line");
+        myToolList.add("Rectangle");
+        myToolList.add("Eclipse");
+        makeActionButtons();
+        
+    }
+    
+    private void makeActionButtons() {
+        for (String s : myToolList) {
+            myToolActionMap.put(s, new ToolAction(s));
+        }
+
+       
+    }
+   
+
+
+        
+    private void createToolBar() {
+        JToolBar toolBar = new JToolBar();
+        for (final JButton button: myButtonList) {
+            toolBar.add(button);
+        }
+        add(toolBar, BorderLayout.PAGE_END);
+    }
+        
+
+    private void makeMenuBar() {
+        final JMenuBar menuBar = new JMenuBar();
+        myMainFrame.setJMenuBar(menuBar);
+        menuBar.add(createFileMenu(menuBar));
+        menuBar.add(createOptionsMenu(menuBar));
+//        menuBar.add(createToolMenu(menuBar));
+       
+    
+    }
+
+    private JMenu createFileMenu(JMenuBar theMenuBar) {
+        final JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+        theMenuBar.add(file);
+        
+        JMenuItem undo = new JMenuItem("Undo All Changes");
+        undo.setMnemonic(KeyEvent.VK_U);
+        file.add(undo);
+        
+        file.addSeparator();
+        
+        JMenuItem exit = new JMenuItem("Exit");
+        exit.setMnemonic(KeyEvent.VK_X);
+        exit.setAccelerator(KeyStroke.getKeyStroke(
+                            KeyEvent.VK_X, ActionEvent.META_MASK));
+        
+        exit.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myMainFrame.dispatchEvent(new WindowEvent(myMainFrame, WindowEvent.WINDOW_CLOSING));
+            }
+        });
+
+        file.add(exit);
+       
+        return file;
+       
+    }
+    private JMenu createOptionsMenu(JMenuBar theMenuBar) {
+        final JMenu options = new JMenu("Options");
+        theMenuBar.add(options);
+        options.add(createGridMenuButton());
+        options.addSeparator();
+        options.add(createThickSubMenu());
+        options.addSeparator();
+        options.add(createColorMenu());
+        
+        return options;
+        
+    }
+    private JCheckBox createGridMenuButton() {
+        final JCheckBox gridCheck = new JCheckBox("Grid");
+        gridCheck.addActionListener(new ActionListener () {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
+        return gridCheck;
+    }
+    
+    
+    private JMenu createThickSubMenu() {
+        final JMenu thicknessMenu = new JMenu("Thickness");
+        final JSlider thickness = new JSlider(0, 20, 1);
+        thicknessMenu.add(thickness);
+        thickness.setMajorTickSpacing(5);
+        thickness.setMinorTickSpacing(1);
+        thickness.setPaintLabels(true);
+        thickness.setPaintTicks(true);
+        return thicknessMenu;
+    }
+    
+    private JMenuItem createColorMenu() {
+        final JMenuItem colorChooser = new JMenuItem("Color...");
+        colorChooser.addActionListener(new ActionListener() {
+            
+            // add code to make color do something.
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JColorChooser chooserYourColor = new JColorChooser();  
+            }
+        });
+        return colorChooser;
+        
+    }
+//    private JMenu createToolMenu(JMenuBar theMenuBar) {
+//        final JMenu tools = new JMenu("Tools");
+//    }
+   
+    class ToolAction extends AbstractAction {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6216916389200515214L;
+
+        ToolAction(String theString) {
+            super(theString);
+            putValue(SHORT_DESCRIPTION, theString);
+            final int keyCode = KeyStroke.getKeyStroke(theString.charAt(0), 0).getKeyCode();
+            putValue(MNEMONIC_KEY, keyCode);
+            
+            final String imageLocation = "images/"
+                            + theString
+                            + ".gif";
+            final URL imgFileLocation = PowerPaintGUI.class.getResource(imageLocation);
+            
+            if (Objects.nonNull(imgFileLocation)) {
+                putValue(SMALL_ICON, new ImageIcon(imgFileLocation, theString));
+            } else { 
+                System.err.println(ERROR_MESSAGE + imgFileLocation);
+            }
+            
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+}

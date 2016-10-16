@@ -1,0 +1,117 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+
+/**
+ * PaintTool Interface.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2014
+ *
+ */
+public interface PaintTool {
+    
+    
+    String PROPERTY_THICKNESS = "Change in Thickness";
+    
+    String PROPERTY_COLOR = "Change in Color";
+    
+    String PROPERTY_STARTX = "Starting X Position";
+    
+    String PROPERTY_STARTY = "Starting Y Position";
+    
+    String PROPERTY_END = "Ending Position";
+    
+    String PROPERTY_HOVER = "Hovering";
+    
+    /**
+     * Starts drawing the Shape on the Drawing Panel.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    void startDrawShape(double theX, double theY);
+    
+    /**
+     * Completes the Shape.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    void endDrawShape(final double theX, final double theY);
+    
+    /**
+     * Shows progress as the user drags the mouse.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    void hoverShape(final double theX, final double theY);
+    
+    /**
+     * Getter method for the myDescription field. 
+     * 
+     * @return a string representation of the tool. 
+     */
+    String getDescription();
+    
+    /**
+     * Getter method for the Shape field. 
+     * 
+     * @return the Shape store in myShape.
+     */
+    Shape getShape();
+    
+    /**
+     * Getter method for the EnhancedShape field. 
+     * 
+     * @return the EnhancedShape stored in myEnhancedShape.
+     */
+    EnhancedShape getEnchancedShape();
+    
+    /**
+     * Creates a new Shape.
+     * 
+     * @param theColor the Color of the new Shape.
+     * @param theThickness the thickness of the new Shape.
+     */
+    void createNewShape();
+    
+    /**
+     * Setter method for myColor.
+     * 
+     * @param theColor a color for the Shape.
+     */
+    void setColor(final Color theColor);
+    
+    /**
+     * Setter method for myThickness.
+     * 
+     * @param theInt an Integer for the Shape thickness.
+     */
+    void setThickness(final int theInt);
+    
+    /**
+     * Getter method for myColor.
+     * 
+     * @return the Color of the Shape.
+     */
+    Color getColor();
+    
+    /**
+     * Getter method for myThickness.
+     * 
+     * @return the thickness of the Shape.
+     */
+    int getThickness();
+    
+
+
+}

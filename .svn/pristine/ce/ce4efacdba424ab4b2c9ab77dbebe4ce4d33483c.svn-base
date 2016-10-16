@@ -1,0 +1,132 @@
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+public class Pencil extends AbstractTool {
+    
+    private static final Path2D LINE_SHAPE = new GeneralPath();
+    
+    private Path2D myPencil;
+    
+    private int myThickness;
+    
+    private Color myColor;
+    
+    /**
+     * Field to store the PropertyChangeSupport Object for this class.
+     */
+    private PropertyChangeSupport myPcs;
+    
+    /**
+     * Field to Store the Shape.
+     */
+    private EnhancedShape myEnhancedShape;
+    
+    public Pencil() {
+        super();   
+        myThickness = 1;
+        myColor = Color.BLACK;
+        myPencil = new GeneralPath();
+        myPcs = new PropertyChangeSupport(this);
+        myEnhancedShape = null;
+    }
+    
+    /**
+     * Adds the PropertyChangeListener to the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener added.
+     */
+    public void addPropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.addPropertyChangeListener(thePcl);
+    }
+    
+    /**
+     * Removes a PropertyChangeListener to from the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener to be removed.
+     */
+    
+    public void removePropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.removePropertyChangeListener(thePcl);
+    }
+    
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        myPencil.moveTo(theX, theY);
+        
+    }
+
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+
+        myPencil.lineTo(theX, theY);
+        myEnhancedShape = new EnhancedShape(myPencil, myColor, myThickness);
+        
+    }
+
+    @Override
+    public void hoverShape(double theX, double theY) {
+        myPencil.lineTo(theX, theY);
+        
+    }
+
+    @Override
+    public void createNewShape() {
+        myPencil = new GeneralPath();
+//        myEnhancedShape = new EnhancedShape(myPencil, theColor, theThickness);
+        
+    }
+
+    /**
+     * Getter method for the myEnhancedShape field.
+     * 
+     * @return the EnchancedShape stored in the field.
+     */
+    @Override
+    public EnhancedShape getEnchancedShape() {
+        
+        return myEnhancedShape;
+    }
+
+    /**
+     * Getter method for the myEllipse field.
+     * 
+     * @return the Shape stored in the field.
+     */
+    public Shape getShape() {
+        
+        return myPencil;
+    }
+    
+    @Override
+    public void setThickness(final int theThickness) {
+        final int old = myThickness;
+        myThickness = theThickness;
+        myPcs.firePropertyChange(PROPERTY_THICKNESS, old, theThickness);
+    }
+    
+    @Override
+    public void setColor(final Color theColor) {
+        final Color old = myColor;
+        myColor = theColor;
+        
+        myPcs.firePropertyChange(PROPERTY_COLOR, old, theColor);
+    }
+
+    @Override
+    public Color getColor() {
+        return myColor;
+    }
+
+    @Override
+    public int getThickness() {
+        return myThickness;
+    }
+}

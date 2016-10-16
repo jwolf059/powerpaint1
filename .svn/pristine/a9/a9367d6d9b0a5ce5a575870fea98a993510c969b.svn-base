@@ -1,0 +1,42 @@
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+
+
+public abstract class AbstractTool {
+    
+
+//    private static final Color DEFAULT_COLOR = Color.BLACK;
+//    private static final int DEFAULT_LINE_THICKNESS = 1;
+    private Shape myShape;
+    private String myDescription;
+//    private int myStartX;
+//    private int myStartY;
+//    private int myEndX;
+//    private int myEndY;
+//    private Color myColor;
+//    private int myLineThickness;
+//    private int myClickCount;
+    
+
+    public AbstractTool(Shape theShape) {
+        myShape = theShape;
+        myDescription = getClass().getSimpleName();
+//        myColor = DEFAULT_COLOR;
+//        myLineThickness = DEFAULT_LINE_THICKNESS;
+    }
+    
+    
+    public abstract void startDrawShape(double theX, double theY);
+
+    public abstract void endDrawShape(double theX, double theY);
+    
+    public String getDescription() {
+        return myDescription;
+    }
+    public Shape getShape() {
+        return myShape;
+    }
+
+}

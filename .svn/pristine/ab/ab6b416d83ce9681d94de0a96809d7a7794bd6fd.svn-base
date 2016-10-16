@@ -1,0 +1,27 @@
+package model;
+
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+
+public class Line extends AbstractTool {
+    
+    private static final Path2D LINE_SHAPE = new GeneralPath();
+
+    public Line() {
+        super(LINE_SHAPE);
+    }
+
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        // TODO Auto-generated method stub
+        LINE_SHAPE.moveTo(theX, theY);
+        
+    }
+
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        LINE_SHAPE.lineTo(theX, theY);
+        
+    }
+
+}

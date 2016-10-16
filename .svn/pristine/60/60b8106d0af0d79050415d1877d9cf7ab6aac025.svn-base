@@ -1,0 +1,221 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+/**
+ * Ellipse Tool class that draws a Ellipse from one point to another by clicking the mouse 
+ * on the drawing panel and dragging until you reach the desired end point. When the user is
+ * dragging the progress can be seen using the hoverShape method.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2015
+ *
+ */
+
+public class Ellipse extends AbstractTool {
+
+    /**
+     * Field to store Ellipse Shape.
+     */
+    private static final Ellipse2D ELLIPSE_SHAPE = new Ellipse2D.Double();
+    
+    /**
+     * Field Storing the starting X.
+     */
+    private double myStartX;
+    
+    /**
+     * Field storing the starting Y.
+     */
+    private double myStartY;
+    
+    /**
+     * Field to Store the Shape.
+     */
+    private Ellipse2D myEllipse;
+    
+    /**
+     * Field to Store the Shape.
+     */
+    private EnhancedShape myEnhancedShape;
+    
+    /**
+     * Field to store the PropertyChangeSupport Object for this class.
+     */
+    private PropertyChangeSupport myPcs;
+    
+    private int myThickness;
+    
+    private Color myColor;
+    
+    /**
+     * Constructor for the Ellipse Tool.
+     */
+    public Ellipse() {
+        super();
+        myThickness = 1;
+        myColor = Color.BLACK;
+        myEllipse = new Ellipse2D.Double();
+        myEnhancedShape = null;
+        myPcs = new PropertyChangeSupport(this);
+        myStartX = 0;
+        myStartY = 0;
+    }
+    
+    /**
+     * Adds the PropertyChangeListener to the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener added.
+     */
+    public void addPropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.addPropertyChangeListener(thePcl);
+    }
+    
+    /**
+     * Removes a PropertyChangeListener to from the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener to be removed.
+     */
+    public void removePropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.removePropertyChangeListener(thePcl);
+    }
+    
+    /**
+     * Starts drawing the Rectangle on the Drawing Panel.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        myStartX = theX;
+        myStartY = theY;
+        myEllipse.setFrame(myStartX, myStartY, 0.0, 0.0);
+        
+    }
+    
+    /**
+     * Completes the Rectangle.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        double width = 0;
+        double height = 0;
+        double newX = 0;
+        double newY = 0;
+        if (theX > myStartX) {
+            width = theX - myStartX;
+            newX = myStartX;
+        }  
+        if (theY > myStartY) {
+            height = theY - myStartY;
+            newY = myStartY;
+        }   
+        if (theX < myStartX) {
+            newX = theX;
+            width = myStartX - theX;
+        }
+        if (theY < myStartY) {
+            newY = theY;
+            height = myStartY - theY;
+        }
+        myEllipse.setFrame(newX, newY, width, height);
+        myEnhancedShape = new EnhancedShape(myEllipse, myColor, myThickness);
+        
+    }
+    
+    /**
+     * Shows progress as the user drags the mouse.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void hoverShape(final double theX, final double theY) {
+        double width = 0;
+        double height = 0;
+        double newX = 0;
+        double newY = 0;
+        if (theX > myStartX) {
+            width = theX - myStartX;
+            newX = myStartX;
+        }  
+        if (theY > myStartY) {
+            height = theY - myStartY;
+            newY = myStartY;
+        }   
+        if (theX < myStartX) {
+            newX = theX;
+            width = myStartX - theX;
+        }
+        if (theY < myStartY) {
+            newY = theY;
+            height = myStartY - theY;
+        }
+        myEllipse.setFrame(newX, newY, width, height);
+    }
+    @Override
+    public void createNewShape() {
+        myEllipse = new Ellipse2D.Double();
+//        myEnhancedShape = new EnhancedShape(myEllipse, theColor, theThickness);
+    }
+    /**
+     * Getter method for the myEnhancedShape field.
+     * 
+     * @return the EnchancedShape stored in the field.
+     */
+    @Override
+    public EnhancedShape getEnchancedShape() {
+        
+        return myEnhancedShape;
+    }
+
+    /**
+     * Getter method for the myEllipse field.
+     * 
+     * @return the Shape stored in the field.
+     */
+    public Shape getShape() {
+        
+        return myEllipse;
+    }
+    
+    @Override
+    public void setThickness(final int theThickness) {
+        final int old = myThickness;
+        myThickness = theThickness;
+        myPcs.firePropertyChange(PROPERTY_THICKNESS, old, theThickness);
+    }
+    
+    @Override
+    public void setColor(final Color theColor) {
+        final Color old = myColor;
+        myColor = theColor;
+        
+        myPcs.firePropertyChange(PROPERTY_COLOR, old, theColor);
+    }
+
+    @Override
+    public Color getColor() {
+        return myColor;
+    }
+
+    @Override
+    public int getThickness() {
+        return myThickness;
+    }
+}

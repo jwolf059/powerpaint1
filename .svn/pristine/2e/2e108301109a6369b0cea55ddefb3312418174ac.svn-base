@@ -1,0 +1,116 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS 305 Autumn 2015
+ */
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+import model.DrawingPanel;
+import model.PaintTool;
+
+/**
+ * Creates a JToolBar for the PowerPaintGUI. The Tool buttons included 
+ * Pencil, Line, Rectangle, and Ellipse.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2015
+ *
+ */
+
+public class ToolBar extends JToolBar {
+
+    /**
+     * A generated serial version UID for object Serialization.
+     */
+    private static final long serialVersionUID = 4268951943328073987L;
+    
+    /**
+     * Field to store JToolBar.
+     */
+    private final JToolBar myToolBar;
+    /**
+     * Constructor for a the JToolBar in PowerPaint.
+     * 
+     * @param theMap a Map with PaintTool Keys and Action values.
+     * @param theTools a collection of Tools.
+     * @param theFrame the Main JFrame used in the GUI.
+     */
+    public ToolBar(final Map<PaintTool, ToolAction> theMap, 
+                   final List<PaintTool> theTools,
+                   final JFrame theFrame,
+                   final DrawingPanel thePanel) { 
+
+        myToolBar = new JToolBar();
+        createToolButtons(theMap, theTools, theFrame);
+        createUndoAndRedo(thePanel);
+    }
+      
+    /**
+     * Creates all Tool Buttons for the JToolBar.
+     * 
+     * @param theMap a Map with PaintTool Keys and Action values.
+     * @param theTools a collection of Tools.
+     * @param theFrame the Main JFrame used in the GUI.
+     */
+    private void createToolButtons(final Map<PaintTool, ToolAction> theMap, 
+                                   final List<PaintTool> theTools,
+                                   final JFrame theFrame)  {
+      
+        final ButtonGroup toolBarGroup = new ButtonGroup();
+        for (final PaintTool aT : theTools) {
+            final JToggleButton button = new JToggleButton(aT.getDescription());
+            toolBarGroup.add(button);
+    
+            button.setAction(theMap.get(aT));
+            myToolBar.add(button);
+            myToolBar.addSeparator();
+        }
+        theFrame.add(myToolBar, BorderLayout.PAGE_END);
+    }
+    
+    /**
+     * Creates the Undo and Redo Buttons with Actions.
+     * 
+     * @param thePanel the DrawingPanel being used.
+     */
+    private void createUndoAndRedo(DrawingPanel thePanel) {
+        final JButton undo = new JButton("Undo");
+        myToolBar.add(undo);
+        undo.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent theEvent) {
+                thePanel.getCollection().undo();
+                thePanel.repaint();
+                
+            }
+            
+        });
+        
+        final JButton redo = new JButton("Redo");
+        myToolBar.add(redo);
+        redo.addActionListener(new ActionListener () {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                thePanel.getCollection().redo();
+                thePanel.repaint();
+            }
+            
+        });
+        
+
+    }
+}

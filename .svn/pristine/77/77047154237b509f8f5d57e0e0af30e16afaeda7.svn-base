@@ -1,0 +1,92 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+
+package model;
+
+import java.awt.Color;
+import java.awt.List;
+import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.Stack;
+
+/**
+ * Collection Class for all Shapes.
+ * 
+ * @author Jeremy Wolf
+ * @version 11 November 2015
+ *
+ */
+public class ShapeCollection extends List {
+    
+    /**
+     * Field to store a Stack of undo shapes.
+     */
+    private Stack<EnhancedShape> myShapes;
+    
+    /**
+     * Field to store a Stack of redo shapes.
+     */
+    private Stack<EnhancedShape> myRedo;
+    
+    /**
+     * Constructor for the ShapeCollection Class.
+     */
+    public ShapeCollection() {
+        super();
+
+        myShapes = new Stack<>();
+        myRedo = new Stack<>();
+    }
+    
+    /**
+     * Adds the Shape to the ArrayList.
+     * 
+     * @param theShape the shape to be added.
+     */
+    public void addShape(final EnhancedShape theShape) {
+        myShapes.push(theShape);
+    }
+    
+    /**
+     * Getter method for the EnchancedShape ArrayList.
+     * @return an Stack of EnchancedShape
+     */
+    public Stack<EnhancedShape> getShapeList() {
+        
+        //do a deep copy later.
+        return myShapes;
+    }
+    
+    public boolean isEmpty() {
+        return myShapes.isEmpty();
+    }
+    
+    /**
+     * Clears the Shape Collection.
+     */
+    public void clearCollection() {
+        myShapes.clear();
+//        if (!myShapes.isEmpty()) {
+//            myShapes.clear();
+//        }
+//        else if (!myRedo.isEmpty()) {
+//        myRedo.clear();
+//        }
+    }
+    
+    public void undo() {
+        EnhancedShape eS = myShapes.pop();
+        myRedo.push(eS);
+    }
+    
+    public void redo() {
+        if (!myRedo.isEmpty()) {
+            EnhancedShape eS = myRedo.pop();
+            myShapes.push(eS);
+        }
+    }
+
+}

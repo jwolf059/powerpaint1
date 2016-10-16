@@ -1,0 +1,78 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+
+package model;
+
+import java.awt.geom.Line2D;
+
+/**
+ * Line Tool class that draws a line from one point to another by clicking the mouse 
+ * on the drawing panel and dragging until you reach the desired end point. When the user is
+ * dragging the progress can be seen using the hoverShape method.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2015
+ *
+ */
+
+public class Line extends AbstractTool {
+    
+    /**
+     * Constant field to store the type of Shape.
+     */
+    private static final Line2D LINE_SHAPE = new Line2D.Double();
+    
+    /**
+     * Field to store the first X.
+     */
+    private double myX;
+    
+    /**
+     * Field to store the first Y.
+     */
+    private double myY;
+
+    /**
+     * Constructs a Line Tool.
+     */
+    public Line() {
+        super(LINE_SHAPE);
+        myX = 0;
+        myY = 0;
+
+                        
+    }
+
+    /**
+     * Starts drawing the Line on the Drawing Panel.
+     */
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        myX = theX;
+        myY = theY;
+        LINE_SHAPE.setLine(theX, theY, theX, theY);
+        
+    }
+
+    /**
+     * Ends the line.
+     */
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        LINE_SHAPE.setLine(myX, myY, theX, theY);
+        
+    }
+    
+    /**
+     * shows progress as the user drags the mouse.
+     */
+    @Override
+    public void hoverShape(final double theX, final double theY) {
+        LINE_SHAPE.setLine(myX, myY, theX, theY);
+        
+    }
+
+}

@@ -1,0 +1,30 @@
+package model;
+
+import java.awt.Color;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+
+public class Rectangle extends AbstractTool {
+    
+    private static final Rectangle2D RECTANGLE_SHAPE = new Rectangle2D.Double();
+    public Rectangle() {
+        super(RECTANGLE_SHAPE);
+    }
+
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        // TODO Auto-generated method stub
+         RECTANGLE_SHAPE.setRect(theX, theY, 0.0, 0.0);
+        
+    }
+
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        RECTANGLE_SHAPE.add(theX, theY);
+        
+        
+    }
+
+
+}

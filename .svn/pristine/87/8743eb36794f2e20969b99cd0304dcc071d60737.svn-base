@@ -1,0 +1,253 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+/**
+ * Rectangle Tool class that draws a Rectangle from one point to another by clicking the mouse 
+ * on the drawing panel and dragging until you reach the desired end point. When the user is
+ * dragging the progress can be seen using the hoverShape method.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2015
+ *
+ */
+
+public class Rectangle extends AbstractTool {
+
+    
+    /**
+     * Static field to Store starting location. 
+     */
+    private static final double START_OFF_SCREEN = -20;
+    
+    /**
+     * Field Storing the starting X.
+     */
+    private double myStartX;
+    
+    /**
+     * Field storing the starting Y.
+     */
+    private double myStartY;
+    
+    /**
+     * Field to store the Shape.
+     */
+    private Rectangle2D myRect;
+    
+    /**
+     * Field to Store the Shape.
+     */
+    private EnhancedShape myEnhancedShape;
+    
+    /**
+     * Field to store the PropertyChangeSupport Object for this class.
+     */
+    private final PropertyChangeSupport myPcs;
+    
+    /**
+     * Field to store the Thickness.
+     */
+    private int myThickness;
+    
+    /**
+     * Field to store the Color.
+     */
+    private Color myColor;
+    
+    /**
+     * Constructor for the Rectangle Tool.
+     */
+    public Rectangle() {
+        super();
+        myThickness = 1;
+        myColor = Color.BLACK;
+        myRect = new Rectangle2D.Double();
+        myEnhancedShape = null;
+        myPcs = new PropertyChangeSupport(this);
+        myStartX = 0;
+        myStartY = 0;
+    }
+    
+    /**
+     * Adds the PropertyChangeListener to the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener added.
+     */
+    public void addPropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.addPropertyChangeListener(thePcl);
+    }
+    
+    /**
+     * Removes a PropertyChangeListener to from the list of PropertyChangeListeners
+     * created by objects of this class. 
+     * 
+     * @param thePcl the PropertyChangeListener to be removed.
+     */
+    public void removePropertyChangeListener(final PropertyChangeListener thePcl) {
+        myPcs.removePropertyChangeListener(thePcl);
+    }
+    
+    /**
+     * Starts drawing the Rectangle on the Drawing Panel.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        myStartX = theX;
+        myStartY = theY;
+        myRect.setRect(myStartX, myStartY, 0.0, 0.0);
+        
+    }
+
+    /**
+     * Completes the Rectangle.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        double width = 0;
+        double height = 0;
+        double newX = 0;
+        double newY = 0;
+        if (theX > myStartX) {
+            width = theX - myStartX;
+            newX = myStartX;
+        }  
+        if (theY > myStartY) {
+            height = theY - myStartY;
+            newY = myStartY;
+        }   
+        if (theX < myStartX) {
+            newX = theX;
+            width = myStartX - theX;
+        }
+        if (theY < myStartY) {
+            newY = theY;
+            height = myStartY - theY;
+        }
+        myRect.setRect(newX, newY, width, height);
+        myEnhancedShape = new EnhancedShape(myRect, myColor, myThickness);
+        myPcs.firePropertyChange(PROPERTY_END, false, true);
+    }
+    
+    /**
+     * Shows progress as the user drags the mouse.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    @Override
+    public void hoverShape(final double theX, final double theY) {
+        double width = 0;
+        double height = 0;
+        double newX = 0;
+        double newY = 0;
+        if (theX > myStartX) {
+            width = theX - myStartX;
+            newX = myStartX;
+        }  
+        if (theY > myStartY) {
+            height = theY - myStartY;
+            newY = myStartY;
+        }   
+        if (theX < myStartX) {
+            newX = theX;
+            width = myStartX - theX;
+        }
+        if (theY < myStartY) {
+            newY = theY;
+            height = myStartY - theY;
+        }
+        myRect.setRect(newX, newY, width, height);
+    }
+    
+    /**
+     * Creates a new Rectangle.
+     */
+    @Override
+    public void createNewShape() {
+        myRect = new Rectangle2D.Double(START_OFF_SCREEN, START_OFF_SCREEN, 0, 0);
+
+        
+    }
+    /**
+     * Getter method for the myEnhancedShape field.
+     * 
+     * @return the EnchancedShape stored in the field.
+     */
+    @Override
+    public EnhancedShape getEnchancedShape() {
+        
+        return myEnhancedShape;
+    }
+
+    /**
+     * Getter method for the myEllipse field.
+     * 
+     * @return the Shape stored in the field.
+     */
+    public Shape getShape() {
+        
+        return myRect;
+    }
+    
+    /**
+     * Setter method for myThickness.
+     * 
+     * @param theInt an Integer for the Shape thickness.
+     */
+    @Override
+    public void setThickness(final int theThickness) {
+        final int old = myThickness;
+        myThickness = theThickness;
+        myPcs.firePropertyChange(PROPERTY_THICKNESS, old, theThickness);
+    }
+    
+    /**
+     * Setter method for myColor.
+     * 
+     * @param theColor a color for the Shape.
+     */
+    @Override
+    public void setColor(final Color theColor) {
+        final Color old = myColor;
+        myColor = theColor;
+        
+        myPcs.firePropertyChange(PROPERTY_COLOR, old, theColor);
+    }
+
+    /**
+     * Getter method for myColor.
+     * 
+     * @return the Color of the Shape.
+     */
+    @Override
+    public Color getColor() {
+        return myColor;
+    }
+
+    /**
+     * Getter method for myThickness.
+     * 
+     * @return the thickness of the Shape.
+     */
+    @Override
+    public int getThickness() {
+        return myThickness;
+    }    
+
+}

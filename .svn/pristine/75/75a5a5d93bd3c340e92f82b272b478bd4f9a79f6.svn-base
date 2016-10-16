@@ -1,0 +1,102 @@
+/*
+ * Assignment 5
+ * 
+ *  * TCSS 305 Autumn 2015
+ */
+package model;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
+
+/**
+ * Creates a Drawing Panel for use in the PowerPaint GUI. 
+ * 
+ * @author Jeremy Wolf email: jwolf059@uw.edu
+ * @version 4 November 2015
+ */
+
+public class DrawingPanel extends JPanel {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4485809200192843869L;
+    private final static int WIDTH = 400;
+    private final static int HEIGHT = 200;
+    private final static Color PANELCOLOR = Color.RED;
+    private static final Dimension MIN_SIZE = new Dimension(WIDTH, HEIGHT);
+    
+    /**
+     * Constructs the Drawing Panel.
+     */
+    public DrawingPanel() {
+        super();
+  
+        setSize(new Dimension(WIDTH, HEIGHT));
+        setBackground(PANELCOLOR);
+        setOpaque(true);
+    
+        addMouseListener(new MyMouseImputAdapter());
+    }
+    
+    /**
+     * Method is used to allow the User to draw on the Drawing Panel.
+     * 
+     * @param theGraphics the Graphic to be drawn. 
+     */
+    @Override
+    protected void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        
+        final Graphics2D g2D = (Graphics2D) theGraphics;
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return MIN_SIZE;
+    }
+ 
+    @Override
+    public Dimension getPreferredSize() {
+        return MIN_SIZE;
+    }
+    
+    
+    
+    
+    
+    /**
+     * A MouseInputAdapter implementation specific to this GUI.
+     * 
+     * @author Jeremy Wolf  Email: Jwolf059@uw.edu
+     * @version 5 November 2015
+     */
+    class MyMouseImputAdapter extends MouseInputAdapter {
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseEntered(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseExited(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseClicked(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseMoved(final MouseEvent theEvent) {}
+        
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {}
+    }
+}
