@@ -1,0 +1,36 @@
+package model;
+
+import java.util.Map;
+
+public class Atv extends AbstractVehicle {
+    
+    public static final int DEATHTIME = 15;
+    
+    public Atv(final int theX, final int theY, final Direction theDir) {
+        
+        super(theX, theY, theDir, DEATHTIME);
+
+    }
+
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        
+        return theTerrain != Terrain.WALL;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        final Light colorLight = Light.GREEN;
+        boolean vaildDirection = false;
+        Direction newDirection = null; 
+        
+        
+        while (!vaildDirection) {
+            newDirection = Direction.random();
+            vaildDirection = newDirection != getDirection().reverse() 
+                           || canPass(theNeighbors.get(newDirection), colorLight);
+        }
+        return newDirection;
+    }
+
+}

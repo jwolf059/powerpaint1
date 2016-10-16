@@ -1,0 +1,68 @@
+package model;
+import java.util.Map;
+/**
+ * 
+ * @author Wolffamily2009
+ * @version 21 Oct 2015
+ */
+public class Truck extends AbstractVehicle {
+    /**
+     * 
+     */
+    public static final int DEATHTIME = 0;
+    /**
+     * 
+     * @param theX the.
+     * @param theY the.
+     * @param theDir the.
+     */
+    public Truck(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir, DEATHTIME);
+    }
+
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+
+        return theTerrain == Terrain.STREET || theTerrain == Terrain.LIGHT;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        
+        final Light colorLight = Light.GREEN;
+        final Direction leftSide = getDirection().left();
+        final Direction rightSide = getDirection().right();
+        final Direction straightAhead = getDirection();
+        final boolean canTurnLeft = canPass(theNeighbors.get(leftSide), colorLight);
+        final boolean canTurnRight = canPass(theNeighbors.get(rightSide), colorLight);
+        final boolean canGoStraight = canPass(theNeighbors.get(straightAhead), colorLight);
+        
+        boolean validDirection = !onlyReverseDirection(canTurnLeft, canTurnRight, 
+                                                      canGoStraight);
+        Direction newDirection = getDirection().reverse();
+        
+        while (!validDirection) {
+            final Direction possibleDirection = Direction.random();
+            
+            if (possibleDirection == leftSide && canTurnLeft) {
+                newDirection = possibleDirection;
+                validDirection = true;
+            } else if (possibleDirection == rightSide && canTurnRight) {
+                newDirection = possibleDirection;
+                validDirection = true;
+            } else if (possibleDirection == straightAhead && canGoStraight) {
+                newDirection = possibleDirection;
+                validDirection = true;
+            }
+        }
+
+        return newDirection;
+    }
+    public boolean onlyReverseDirection(final boolean theTurnLeft, final boolean theTurnRight, 
+                                        final boolean theGoStraight) {
+
+        return theTurnLeft || theTurnRight || theGoStraight;
+    }
+    
+
+}

@@ -1,0 +1,52 @@
+package model;
+
+import java.util.Map;
+
+public class Car extends AbstractVehicle {
+    
+    public static final int DEATHTIME = 5;
+
+    public Car(final int theX, final int theY, final Direction theDir) {
+        
+        super(theX, theY, theDir, DEATHTIME);
+        
+    }
+
+    @Override
+    public boolean canPass(Terrain theTerrain, Light theLight) {
+        boolean goodTerrain = theTerrain == (Terrain.STREET);
+        boolean goodTerrain2 = theTerrain == Terrain.LIGHT && theLight != Light.RED;
+
+        
+        return goodTerrain || goodTerrain2; 
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        
+        Direction newDirection;
+        final Light colorLight = Light.GREEN;
+        final Direction leftSide = getDirection().left();
+        final Direction rightSide = getDirection().right();
+        final Direction straightAhead = getDirection();
+        final boolean canTurnLeft = canPass(theNeighbors.get(leftSide), colorLight);
+        final boolean canTurnRight = canPass(theNeighbors.get(rightSide), colorLight);
+        final boolean canGoStraight = canPass(theNeighbors.get(straightAhead), colorLight);
+
+        
+        if (canGoStraight) {
+            newDirection = getDirection();
+            
+        } else if (canTurnLeft) {
+            newDirection = leftSide;
+            
+        } else if (canTurnRight) {
+            newDirection = rightSide;
+            
+        } else {
+            newDirection = getDirection().reverse();
+        }
+        return newDirection;
+    }
+
+}
