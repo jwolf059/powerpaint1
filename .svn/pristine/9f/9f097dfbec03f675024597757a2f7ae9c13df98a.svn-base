@@ -1,0 +1,382 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+
+import model.AbstractTool;
+import model.DrawingPanel;
+import model.Ellipse;
+import model.Line;
+import model.Pencil;
+import model.Rectangle;
+
+/**
+ * Creates a PowerPaint GUI that contains a JPane that the user can draw shapes on.
+ * Each Shape can be drawn by selecting the given tool.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2015
+ */
+public class PowerPaintGUI extends JPanel {
+    
+    /**
+     * A generated serial version UID for object Serialization.
+     */
+    private static final long serialVersionUID = -1162350521238926809L;
+    
+    /**
+     * Field to store the Panel to be drawn on.
+     */
+    private DrawingPanel myDrawPanel;
+    
+    /**
+     * Field to store the main JFrame.
+     */
+    private final JFrame myMainFrame;
+    
+    /**
+     * A Map of Tools and the Actions Assigned to them.
+     */
+    private final Map<AbstractTool, ToolAction> myToolActionMap;
+
+    /**
+     * Filed to store a Collection of AbstractTools.
+     */
+    private List<AbstractTool> myToolList; 
+
+    /**
+     * Constructor for the PowerPaintGUI.
+     */
+    public PowerPaintGUI()  {
+        super(new BorderLayout());
+        myToolActionMap = new HashMap<>();
+        myMainFrame = new JFrame("PowerPaint");
+        setUpComponents();
+        
+    }
+    /**
+     * Sets up the GUI Components.
+     */
+    public final void setUpComponents() {
+
+        myMainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        final ImageIcon imgicon = new ImageIcon(PowerPaintGUI.class.
+                                                getResource("images/w.gif"));
+        myMainFrame.setIconImage(imgicon.getImage());
+        myDrawPanel = new DrawingPanel();
+        add(myDrawPanel, BorderLayout.CENTER);
+        createTools();
+        makeMenuBar();
+        myMainFrame.setMinimumSize(myDrawPanel.getMinimumSize());
+        myMainFrame.add(this, BorderLayout.CENTER);
+        myMainFrame.pack();
+        myMainFrame.setVisible(true);
+    }
+    
+    /**
+     * Creates all the Tool Classes and adds them to a List for Creation of
+     * buttons.
+     */
+    private void createTools() {
+        myToolList = new ArrayList<>();
+        myToolList.add(new Pencil());
+        myToolList.add(new Line());
+        myToolList.add(new Rectangle());
+        myToolList.add(new Ellipse());
+        makeActions();
+        
+    }
+    
+    /**
+     * Creates a HashMap of Tools as Key and Actions as there values.
+     */
+    private void makeActions() {
+        for (AbstractTool aT : myToolList) {
+            myToolActionMap.put(aT, new ToolAction(aT));
+            
+        }
+        createToolBar();
+       
+    }
+   
+
+
+     /**
+      * Creates a JToolBar using the ToolActionMap.   
+      */
+    private void createToolBar() {
+        final JToolBar toolBar = new JToolBar();
+        final ButtonGroup toolBarGroup = new ButtonGroup();
+        for (final AbstractTool aT : myToolList) {
+            final JToggleButton button = new JToggleButton(aT.getDescription());
+            toolBarGroup.add(button);
+            button.setAction(myToolActionMap.get(aT));
+            toolBar.add(button);
+            toolBar.addSeparator();
+        }
+        add(toolBar, BorderLayout.PAGE_END);
+    }
+        
+    /**
+     * Creates the JMenuBar and all the Menu and MenuItems.
+     */
+    private void makeMenuBar() {
+        final JMenuBar menuBar = new JMenuBar();
+        myMainFrame.setJMenuBar(menuBar);
+        createFileMenu(menuBar);
+        createOptionsMenu(menuBar);
+        createToolMenu(menuBar);
+        createHelpMenu(menuBar);
+       
+    
+    }
+    /**
+     * Creates the File Menu with assigned Mnemonic.
+     * @param theMenuBar the JMenuBar that the JMenu is being added to.
+     */
+    private void createFileMenu(final JMenuBar theMenuBar) {
+        final JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+        theMenuBar.add(file);
+        
+        final JMenuItem undo = new JMenuItem("Undo All Changes");
+        undo.setMnemonic(KeyEvent.VK_U);
+        file.add(undo);
+        
+        file.addSeparator();
+        
+        final JMenuItem exit = new JMenuItem("Exit");
+        exit.setMnemonic(KeyEvent.VK_X);
+        exit.setAccelerator(KeyStroke.getKeyStroke(
+                            KeyEvent.VK_X, ActionEvent.META_MASK));
+        
+        exit.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myMainFrame.dispatchEvent(new WindowEvent(myMainFrame, 
+                                                          WindowEvent.WINDOW_CLOSING));
+            }
+        });
+
+        file.add(exit);
+        theMenuBar.add(file);
+        
+       
+    }
+    /**
+     * Creates the Options Menu with assigned Mnemonic.
+     * @param theMenuBar the JMenuBar that the JMenu is being added to.
+     */
+    private void createOptionsMenu(final JMenuBar theMenuBar) {
+        final JMenu options = new JMenu("Options");
+        options.setMnemonic(KeyEvent.VK_O);
+        theMenuBar.add(options);
+        options.add(createGridMenuButton());
+        options.addSeparator();
+        options.add(createThickSubMenu());
+        options.addSeparator();
+        options.add(createColorMenu());
+        theMenuBar.add(options);
+        
+    }
+    /**
+     * Creates a JCheckBox for the grid function.
+     * @return a JCheckBox.
+     */
+    private JCheckBox createGridMenuButton() {
+        final JCheckBox gridCheck = new JCheckBox("Grid");
+        gridCheck.setMnemonic(KeyEvent.VK_G);
+        gridCheck.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                // TODO Auto-generated method stub
+            }
+        });
+        return gridCheck;
+    }
+    
+    /**
+     * Creates a JSlider for the Thickness function.
+     * @return a JSlider with major TickMark at 5 and Minor at 1.
+     */
+    private JMenu createThickSubMenu() {
+        final int major = 5;
+        final int minor = 1;
+        final JMenu thicknessMenu = new JMenu("Thickness");
+        thicknessMenu.setMnemonic(KeyEvent.VK_T);
+        final JSlider thickness = new JSlider(0, 20, 1);
+        thicknessMenu.add(thickness);
+        thickness.setMajorTickSpacing(major);
+        thickness.setMinorTickSpacing(minor);
+        thickness.setPaintLabels(true);
+        thickness.setPaintTicks(true);
+
+        return thicknessMenu;
+    }
+    
+    /**
+     * Creates a JMenuItem that will open a JColorChooser.
+     * @return a JMenuItem.
+     */
+    private JMenuItem createColorMenu() {
+        final JMenuItem colorChooser = new JMenuItem("Color...");
+        colorChooser.setMnemonic(KeyEvent.VK_C);
+        colorChooser.addActionListener(new ActionListener() {
+            
+            // add code to make color do something.
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) { 
+            }
+        });
+        return colorChooser;
+        
+    }
+    
+    /**
+     * Creates the Tool Menu with assigned Mnemonic.
+     * 
+     * @param theMenuBar the JMenuBar that the JMenu is being added to.
+     */
+    private void createToolMenu(final JMenuBar theMenuBar) {
+        final JMenu tools = new JMenu("Tools");
+        tools.setMnemonic(KeyEvent.VK_T);
+        int count = 0;
+        final ButtonGroup toolGroup = new ButtonGroup();
+        for (final AbstractTool aT : myToolList) {
+            final JRadioButton button = new JRadioButton(aT.getDescription());
+            if (count < 1) {
+                count += 1;
+                button.setSelected(true);
+            }
+            button.setAction(myToolActionMap.get(aT));
+            tools.add(button);
+            toolGroup.add(button);
+        }
+        theMenuBar.add(tools);
+    }
+    /**
+     * Creates the Help Menu with assigned Mnemonic.
+     * 
+     * @param theMenuBar the JMenuBar that the JMenu is being added to.
+     */
+    private void createHelpMenu(final JMenuBar theMenuBar) {
+        final JMenu help = new JMenu("Help");
+        theMenuBar.add(help);
+        help.add(createAboutItem());
+        help.setMnemonic(KeyEvent.VK_H);
+        
+        theMenuBar.add(help);
+    }
+   /**
+    * Creates the About JMenuItem that when selected opens a JOptionPane.
+    * @return a JMenuItem.
+    */
+    private JMenuItem createAboutItem() {
+        final JMenuItem about = new JMenuItem("About...");
+        about.setMnemonic(KeyEvent.VK_A);
+        about.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                JOptionPane.showMessageDialog(null, "TCSS 305 PowerPaint, "
+                                + "Autum 2015", "About", JOptionPane.DEFAULT_OPTION);
+            }
+        });
+        return about;
+    }
+    
+    /**
+     * Creates the Actions for each of the Tools in the PowerPaint program and
+     * sets up the link between JToggleButtons on the ToolBar and JRadioButtons
+     * in the Tool Menu.
+     * 
+     * @author Jeremy Wolf
+     *
+     */
+    class ToolAction extends AbstractAction {
+
+        /**
+         * A generated serial version UID for object Serialization.
+         */
+        private static final long serialVersionUID = 6216916389200515214L;
+        
+        /**
+         * Field to store the current Tool.
+         */
+        private AbstractTool myTool;
+
+        /**
+         * Constructors for the ToolAction Class.
+         * 
+         * @param theTool a Tool from the AbstractTool Class.
+         */
+        ToolAction(final AbstractTool theTool) {
+            super(theTool.getDescription());
+            myTool = theTool;
+            putValue(SHORT_DESCRIPTION, theTool.getDescription());
+            final int keyCode = KeyStroke.getKeyStroke(theTool.getDescription().
+                                                       charAt(0), 0).getKeyCode();
+            putValue(MNEMONIC_KEY, keyCode);
+            putValue(SELECTED_KEY, false);
+            
+            final String imageLocation = "images/"
+                            + theTool.getDescription()
+                            + ".gif";
+            final URL imgFileLocation = PowerPaintGUI.class.getResource(imageLocation);
+            
+            if (Objects.nonNull(imgFileLocation)) {
+                putValue(SMALL_ICON, new ImageIcon(imgFileLocation, theTool.getDescription()));
+            } else { 
+                System.err.println("No Image Found" + imgFileLocation);
+            }
+        }
+        
+        /**
+         * Action to be performed by the assigned Button.
+         * 
+         * @param theEvent is the event of the button be clicked.
+         */
+        @Override
+        public void actionPerformed(final ActionEvent theEvent) {
+            putValue(SELECTED_KEY, true); 
+            myDrawPanel.setPaintTool(myTool);
+
+        }
+        
+        
+    }
+
+
+}

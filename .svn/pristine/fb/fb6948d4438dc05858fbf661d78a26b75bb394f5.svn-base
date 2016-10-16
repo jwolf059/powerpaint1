@@ -1,0 +1,126 @@
+/*
+ * Assignment 5
+ * 
+ * TCSS305 - Autumn 2015
+ */
+
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.beans.PropertyChangeSupport;
+
+/**
+ * AbstractTool class that instantiated two fields and two methods. This class
+ * requires all child classes to implement the two draw shape methods and the 
+ * hover shape method.
+ * 
+ * @author Jeremy Wolf
+ * @version 9 November 2014
+ *
+ */
+public abstract class AbstractTool implements PaintTool {
+    
+    /**
+     * Field to store the Description of the tool.
+     */
+    private final String myDescription;
+
+
+    /**
+     * Constructor for the AbstractTool class.
+     * 
+     */
+    public AbstractTool() {
+        myDescription = getClass().getSimpleName();
+
+
+    }
+    
+    /**
+     * Starts drawing the Shape on the Drawing Panel.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    public abstract void startDrawShape(double theX, double theY);
+    
+    /**
+     * Completes the Shape.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    public abstract void endDrawShape(final double theX, final double theY);
+    
+    /**
+     * Shows progress as the user drags the mouse.
+     * 
+     * @param theX the x value used to draw.
+     * @param theY the y value used to draw.
+     */
+    public abstract void hoverShape(final double theX, final double theY);
+    
+    /**
+     * Creates a new Shape.
+     * 
+     * @param theColor the Color of the new Shape.
+     * @param theThickness the thickness of the new Shape.
+     */
+    public abstract void createNewShape();
+    
+    /**
+     * Getter method for the myDescription field. 
+     * 
+     * @return a string representation of the tool. 
+     */
+    public String getDescription() {
+        return myDescription;
+    }
+    
+    /**
+     * Getter method for the myEnchancedShapefield. 
+     * 
+     * @return the EnchancedShape store in myEnchancedShape.
+     */
+    public abstract EnhancedShape getEnchancedShape();
+    
+    /**
+     * Getter method for the myShape field. 
+     * 
+     * @return the Shape store in myShape.
+     */
+    public abstract Shape getShape();
+
+    
+    /**
+     * Setter method for myColor.
+     * 
+     * @param theColor a color for the Shape.
+     */
+    public abstract void setColor(final Color theColor);
+
+    
+    /**
+     * Setter method for myThickness.
+     * 
+     * @param theInt an Integer for the Shape thickness.
+     */
+    public abstract void setThickness(final int theInt);
+    /**
+     * Getter method for myColor.
+     * 
+     * @return the Color of the Shape.
+     */
+    public abstract Color getColor();
+    
+    /**
+     * Getter method for myThickness.
+     * 
+     * @return the thickness of the Shape.
+     */
+    public abstract int getThickness();
+        
+
+
+}

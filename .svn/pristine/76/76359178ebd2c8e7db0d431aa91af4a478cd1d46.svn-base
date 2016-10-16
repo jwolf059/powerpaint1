@@ -1,0 +1,124 @@
+/*
+ * Assignment 5
+ * 
+ *  * TCSS 305 Autumn 2015
+ */
+package model;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
+
+/**
+ * Creates a Drawing Panel for use in the PowerPaint GUI. 
+ * 
+ * @author Jeremy Wolf email: jwolf059@uw.edu
+ * @version 4 November 2015
+ */
+
+public class DrawingPanel extends JPanel {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4485809200192843869L;
+    private final static int WIDTH = 400;
+    private final static int HEIGHT = 200;
+    private final static Color PANELCOLOR = Color.WHITE;
+    private static final Dimension MIN_SIZE = new Dimension(WIDTH, HEIGHT);
+    private List<Shape> my2DShapes;
+    private int myThickness;
+    private AbstractTool myCurrentTool;
+    
+    /**
+     * Constructs the Drawing Panel.
+     */
+    public DrawingPanel() {
+        super();
+        my2DShapes = new ArrayList();
+        myThickness = 1;
+        setSize(new Dimension(WIDTH, HEIGHT));
+        setBackground(PANELCOLOR);
+        setOpaque(true);
+        myCurrentTool = new Pencil();
+    
+        addMouseListener(new MyMouseImputAdapter());
+    }
+    
+    /**
+     * Method is used to allow the User to draw on the Drawing Panel.
+     * 
+     * @param theGraphics the Graphic to be drawn. 
+     */
+    @Override
+    protected void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        Shape shapeToDraw = myCurrentTool.getShape();
+        
+        final Graphics2D g2D = (Graphics2D) theGraphics;
+        
+        g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        g2D.setPaint(Color.BLACK);
+        g2D.setStroke(new BasicStroke(myThickness));
+        if (!my2DShapes.isEmpty()) {
+            for (final Shape s: my2DShapes) {
+                g2D.draw(s);
+            }
+        }
+        g2D.draw(myCurrentTool.getShape());
+        
+        
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return MIN_SIZE;
+    }
+ 
+    @Override
+    public Dimension getPreferredSize() {
+        return MIN_SIZE;
+    }
+    
+    public void setPaintTool(AbstractTool theTool) {
+        myCurrentTool = theTool;
+    }
+    
+    
+    
+    /**
+     * A MouseInputAdapter implementation specific to this GUI.
+     * 
+     * @author Jeremy Wolf  Email: Jwolf059@uw.edu
+     * @version 5 November 2015
+     */
+    class MyMouseImputAdapter extends MouseInputAdapter {
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            myCurrentTool.startDrawShape(theEvent.getX(), theEvent.getY());
+       }
+        
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {
+            myCurrentTool.endDrawShape(theEvent.getX(), theEvent.getY());
+            my2DShapes.add(myCurrentTool.getShape());
+            repaint();
+        }
+        
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {}
+        
+    }
+}

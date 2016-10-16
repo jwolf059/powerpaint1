@@ -1,0 +1,11 @@
+package model;
+
+public interface PaintTool {
+    
+    void startDrawShape(double theX, double theY);
+
+    void endDrawShape(double theX, double theY);
+    
+    String getDescription();
+
+}

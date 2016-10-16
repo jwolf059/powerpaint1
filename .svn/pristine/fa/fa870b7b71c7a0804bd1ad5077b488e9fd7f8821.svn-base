@@ -1,0 +1,31 @@
+package model;
+
+import java.awt.Color;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+
+public class Pencil extends AbstractTool {
+    
+    private static final Path2D LINE_SHAPE = new GeneralPath();
+    public Pencil() {
+        super(LINE_SHAPE);    
+        }
+
+    @Override
+    public void startDrawShape(final double theX, final double theY) {
+        LINE_SHAPE.moveTo(theX, theY);
+        
+    }
+
+    @Override
+    public void endDrawShape(final double theX, final double theY) {
+        LINE_SHAPE.lineTo(theX, theY);
+        
+    }
+
+    @Override
+    public void hoverShape(double theX, double theY) {
+        LINE_SHAPE.lineTo(theX, theY);
+        
+    }
+}
